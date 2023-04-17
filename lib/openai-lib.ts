@@ -1,9 +1,10 @@
 
  
- import {getOpenAIApiKey} from "../lib/api-key-helper"
+ import { GptMessage } from "../interfaces/types"
+import {getOpenAIApiKey} from "../lib/api-key-helper"
  import {tryRequest, getOpenAiKeyHeader } from "../lib/request-lib"
 
- import {  CreateImageRequestSizeEnum } from 'openai'
+ //import {  CreateImageRequestSizeEnum } from 'openai'
 
   const API_KEY = getOpenAIApiKey()
 
@@ -40,11 +41,15 @@ export async function createChatCompletion(
     {
         model,
         prompt,
+        systemPrompt,
+        chatHistory,
         max_tokens,
         temperature
       }:{
         model:string
         prompt:string
+        systemPrompt?:string
+        chatHistory?:GptMessage[]
         max_tokens?:number
         temperature?:number
       }
@@ -52,12 +57,28 @@ export async function createChatCompletion(
 ){
 
 //  "messages": [{"role": "user", "content": "Hello!"}]
-    let messages:any =  [
-        {
-            role:"user",
-            content: prompt 
-        }
-    ]
+    let messages:any =  [  ]
+
+    if(chatHistory){
+      chatHistory.forEach((hMsg)=>{
+        messages.push({
+          role:hMsg.role,
+          content:hMsg.content
+        })
+      })
+    }
+
+    messages.push(   {
+        role:"user",
+        content: prompt 
+    })
+
+    if(systemPrompt){
+      messages.push({
+        role:"system",
+        content:"systemPrompt"
+      })
+    }
 
 
 
@@ -122,7 +143,7 @@ export async function createImage(
     //model:string
     prompt:string
     n?:number
-    size?:CreateImageRequestSizeEnum
+    size?:any
   }
 ){
   

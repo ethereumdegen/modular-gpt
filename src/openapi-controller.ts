@@ -1,13 +1,14 @@
 
  
 
-import {  CreateImageRequestSizeEnum } from 'openai'
-
-
-import { createCompletion, createChatCompletion, createImage } from "../lib/openai-lib"
+ 
+import { AssertionResult, GptMessage, TurboGptResponse } from "../interfaces/types";
+import { createChatCompletion, createImage } from "../lib/openai-lib"
 
 export interface QueryInput {
     prompt:string,
+    systemPrompt?:string,
+    chatHistory?:GptMessage[],
     model?:string,  
     max_tokens?: number
 
@@ -15,7 +16,7 @@ export interface QueryInput {
 
 export interface ImageInput {
     prompt:string,
-    size?:CreateImageRequestSizeEnum
+    size?:any 
    
 
 }
@@ -31,12 +32,14 @@ export default class OpenAiController {
 
     }
 
-    async query(input:QueryInput){
+    async queryChat(input:QueryInput) : Promise<AssertionResult<TurboGptResponse>>{
 
         try{
         const response = await createChatCompletion({
                 model: input.model ? input.model : DEFAULT_MODEL , //"gpt-3.5-turbo",
                 prompt: input.prompt,
+                systemPrompt:input.systemPrompt,
+                chatHistory: input.chatHistory,
                 temperature: 0,
                 max_tokens: input.max_tokens?  input.max_tokens :1000,
         });

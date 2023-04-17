@@ -1,6 +1,6 @@
-## Power GPT
+## Modular GPT
 
-OpenAI in your command prompt
+OpenAI in your command prompt with modules 
 
 
 
@@ -11,10 +11,12 @@ OpenAI in your command prompt
 2. yarn && yarn start 
 
 
-### Helpful Hints
+### TODO 
 
-1. Use the keyword 'image' in your query to generate an image 
+https://github.com/lirantal/nodejs-cli-apps-best-practices
 
+- consider using INK 
+- consider using prompts 
 
 
 ![image](https://user-images.githubusercontent.com/6249263/227419638-1f703d4f-163a-4c14-86f7-97e148313c67.png)
