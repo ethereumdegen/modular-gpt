@@ -1,6 +1,16 @@
  {
     "apps" : [
+        {
+          "name": "prompt-gpt",
+          "script": "yarn start",
+          "watch": false,
+          "ignore_watch" : ["node_modules", "public","dist","cache"],
          
+          "env": { 
+              "NODE_ENV": "development"
+          }
+        },
+
 
         {
           "name": "websearch-module",

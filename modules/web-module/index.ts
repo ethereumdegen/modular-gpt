@@ -5,7 +5,7 @@ import localConfig from "./config.json";
  
 import { fetchGptQueryWithSearch } from "./api-controller";
  
-
+const { JSONRPCServer } = require("json-rpc-2.0");
  /*
 {
       "jsonrpc": "2.0",
@@ -25,7 +25,7 @@ const moduleName = localConfig.name;
 let serverConfig = submoduleConfigFile[moduleName];
 
 async function start() {
-  const { JSONRPCServer } = require("json-rpc-2.0");
+
 
   const jrpcserver = new JSONRPCServer();
 

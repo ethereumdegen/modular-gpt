@@ -3,7 +3,8 @@
     "memory":{"port":6101},
     "websearch":{"port":6102},
     "filemanager":{"port":6103},
-    "ethereumwallet":{"port":6104}
+    "ethereumwallet":{"port":6104},
+    "createcode":{"port":6105}
 
 }
 

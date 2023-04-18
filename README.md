@@ -27,7 +27,23 @@ OPENAI_API_KEY={your api key}
 ![image](https://user-images.githubusercontent.com/6249263/227419638-1f703d4f-163a-4c14-86f7-97e148313c67.png)
 
 
-### Using modules 
+### Using with pm2 (process manager)
+
+To boot all processes as daemons with pm2, use the command
+
+```
+yarn pm2 
+``` 
+
+As usual, this will serve the base prompting process on port 6100.  Therefore, you can then use a package like [prompt-buddy](https://www.npmjs.com/package/prompt-buddy) to query directly from your command line anywhere as a global npm package like this:
+
+```
+prompt-buddy what is 0xbitcoin token?
+```
+
+
+
+### Using modules individually 
 
 #### Web Module 
 To use the web module, run this command in a separate terminal to boot the webmodule microservice 

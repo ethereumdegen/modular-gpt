@@ -1,6 +1,7 @@
 import OpenAiController from "./openapi-controller"
 import {getOpenAIApiKey} from "../lib/api-key-helper"
- 
+const { JSONRPCServer } = require("json-rpc-2.0");
+
 import chalk from 'chalk'
 import prompts from 'prompts'
 
@@ -15,10 +16,11 @@ let aiController = new OpenAiController(API_KEY)
 const AI_MODEL = process.env.AI_MODEL;
 let aiModel:string = AI_MODEL || 'gpt-3.5-turbo'
 
+const LISTEN_PORT = 6100
 
 const MODULE_NAME = process.env.MODULE
   
-   
+const LISTEN = process.env.LISTEN || true 
 
 const running = true ; 
  
@@ -35,6 +37,7 @@ import { handleUserInput, isValidModuleName, MODULE_SELECT_QUERY_PREFIX } from "
 import { GptMessage, GptResponseChoice, TurboGptResponse } from "../interfaces/types";
 import { isAssertionSuccess } from "../lib/assertion-helper";
 import { getApiUrlForSubmodule, sendSubmoduleRequest } from "../lib/protocol";
+import WebServer from "../lib/web-server";
  
   
 function setupTerminal(){
@@ -118,6 +121,65 @@ async function queryModule(moduleName:string|undefined, userInput:string ) : Pro
 }
 
 
+async function handleUserInput(userInputText:string){
+       
+    let moduleName = MODULE_NAME || undefined
+
+
+    let moduleTypeResponse = await aiController.queryChat({
+        prompt: `${MODULE_SELECT_QUERY_PREFIX} ${userInputText}`,
+        model: aiModel 
+    }) 
+
+    if(isAssertionSuccess(moduleTypeResponse)){
+        let moduleType = moduleTypeResponse.data?.choices[0]?.message?.content
+        if(moduleType && isValidModuleName(moduleType)){
+            moduleName = moduleType
+            console.log('Using module: ', moduleName)
+        }
+    }
+
+    let promptInput = await queryModule( moduleName, userInputText );
+
+
+    let response = await aiController.queryChat({
+        prompt: promptInput,
+        model: aiModel,
+        chatHistory: getChatHistory()
+    }) 
+
+    return response 
+  
+
+
+}
+
+async function createListenServer( callback:Function ){
+
+
+    const jrpcserver = new JSONRPCServer(); 
+
+
+    const queryMethod = async (params:any) => {
+
+        let response = await callback(params[0])
+
+        if(response.success){
+            return response.data?.choices[0]?.message?.content
+        }else{
+            return response.error
+        } 
+       
+    }
+   
+    jrpcserver.addMethod("query", queryMethod);
+   
+  
+    let rpcserver = new WebServer({port:LISTEN_PORT}, jrpcserver);
+    await rpcserver.start();
+
+}
+
 async function init(){
 
  
@@ -125,7 +187,15 @@ async function init(){
 
 
     setupTerminal()
-  
+
+
+    if(LISTEN){
+        try{
+            createListenServer( handleUserInput )
+        }catch(e){
+            console.error(e)
+        }
+    } 
 
 
     while (running){
@@ -139,49 +209,23 @@ async function init(){
           });
 
         const userInputText = userInput.input
-        
-        let moduleName = MODULE_NAME || undefined
 
 
-        let moduleTypeResponse = await aiController.queryChat({
-            prompt: `${MODULE_SELECT_QUERY_PREFIX} ${userInputText}`,
-            model: aiModel 
-        }) 
-
-        if(isAssertionSuccess(moduleTypeResponse)){
-            let moduleType = moduleTypeResponse.data?.choices[0]?.message?.content
-            if(moduleType && isValidModuleName(moduleType)){
-                moduleName = moduleType
-                console.log('Using module: ', moduleName)
-            }
-        }
-
-        let promptInput = await queryModule( moduleName, userInputText );
-
-      //  console.log({promptInput})
-      //  let promptInput = userInput.input
-
-        
-  
-        let response = await aiController.queryChat({
-            prompt: promptInput,
-            model: aiModel,
-            chatHistory: getChatHistory()
-        }) 
-        
+       let response = await handleUserInput(userInputText);
+          
+            
         if(isAssertionSuccess(response)){
             
             pushToChatHistory({
                 role:"user", 
                 content: userInputText ,
             })
-  
+
             
             handleGptResponse( response.data )
         }else{
             console.error(response.error)
         }
- 
 
         
     }
