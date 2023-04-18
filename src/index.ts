@@ -31,7 +31,7 @@ const botColor = chalk.cyan
 
 //@ts-ignore
 //import readline from 'readline-promise';
-import { handleUserInput } from "./commands";
+import { handleUserInput, isValidModuleName, MODULE_SELECT_QUERY_PREFIX } from "./commands";
 import { GptMessage, GptResponseChoice, TurboGptResponse } from "../interfaces/types";
 import { isAssertionSuccess } from "../lib/assertion-helper";
 import { getApiUrlForSubmodule, sendSubmoduleRequest } from "../lib/protocol";
@@ -85,7 +85,7 @@ function printGptResponse(choice:GptResponseChoice){
 
 async function queryModule(moduleName:string|undefined, userInput:string ) : Promise<string>{
 
-    if(moduleName){
+    if(moduleName == 'websearch'){
         
         try{
         let response = await sendSubmoduleRequest({
@@ -96,16 +96,16 @@ async function queryModule(moduleName:string|undefined, userInput:string ) : Pro
         })
       
         
-        if(!response || !response.data){
-            throw new Error('no response from submodule')
-        }
+            if(!response || !response.data){
+                throw new Error('no response from submodule')
+            }
       
-        return response.data.result
+          return response.data.result
         }catch(e){
 
-            console.log(`ERROR: could not connect to submodule ${moduleName}. Is it running? `)
+            console.log(chalk.red(`ERROR: could not connect to submodule ${moduleName}. Is it running?`))
 
-            console.error(e)
+           // console.error(e)
             return userInput
         }
 
@@ -138,11 +138,25 @@ async function init(){
             message: question
           });
 
-    
+        const userInputText = userInput.input
         
-        const moduleName = MODULE_NAME || undefined
+        let moduleName = MODULE_NAME || undefined
 
-        let promptInput = await queryModule( moduleName, userInput.input );
+
+        let moduleTypeResponse = await aiController.queryChat({
+            prompt: `${MODULE_SELECT_QUERY_PREFIX} ${userInputText}`,
+            model: aiModel 
+        }) 
+
+        if(isAssertionSuccess(moduleTypeResponse)){
+            let moduleType = moduleTypeResponse.data?.choices[0]?.message?.content
+            if(moduleType && isValidModuleName(moduleType)){
+                moduleName = moduleType
+                console.log('Using module: ', moduleName)
+            }
+        }
+
+        let promptInput = await queryModule( moduleName, userInputText );
 
       //  console.log({promptInput})
       //  let promptInput = userInput.input
@@ -159,7 +173,7 @@ async function init(){
             
             pushToChatHistory({
                 role:"user", 
-                content:promptInput,
+                content: userInputText ,
             })
   
             

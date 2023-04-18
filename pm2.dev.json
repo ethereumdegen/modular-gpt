@@ -1,0 +1,19 @@
+ {
+    "apps" : [
+         
+
+        {
+          "name": "websearch-module",
+          "script": "yarn webmodule start",
+          "watch": false,
+          "ignore_watch" : ["node_modules", "public","dist","cache"],
+         
+          "env": { 
+              "NODE_ENV": "development"
+          }
+        }
+          
+    ]
+  }
+
+ 

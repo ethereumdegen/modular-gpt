@@ -25,13 +25,7 @@ OPENAI_API_KEY={your api key}
 ### Using modules 
 
 #### Web Module 
-To use the web module, in the .env file, add
-
-```
-MODULE=web
-```
-
-Then, run this command in a separate terminal to boot the webmodule microservice 
+To use the web module, run this command in a separate terminal to boot the webmodule microservice 
 
 ```
 yarn webmodule start 
