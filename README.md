@@ -1,11 +1,18 @@
 ## Modular GPT
 
-OpenAI in your command prompt ~ with modules ~ which are plugins (microservices) which the primary prompting process communicates with using JSONRPC automagically.
+OpenAI in your command prompt with modules. 
+
+Modules are plugins (microservices) which the primary prompting process can communicates with using JSONRPC in the background.
  
 
 ### Getting Started 
 
-1. Create a file named .env and add the token OPENAI_API_KEY= followed by your api key  (https://platform.openai.com/account/api-keys)
+1. Create a file named .env and add the token 
+```
+OPENAI_API_KEY={your api key} 
+```
+
+ (https://platform.openai.com/account/api-keys)
 
 2. yarn && yarn start 
 
