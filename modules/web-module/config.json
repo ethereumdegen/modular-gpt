@@ -1,0 +1,14 @@
+{
+  "name": "web",
+
+  "routes": [
+    {
+      "type": "post",
+      "uri": "/search",
+      "method": "webSearch",
+      "controller": "api"
+    }
+  ],
+
+  "prompts": {}
+}
