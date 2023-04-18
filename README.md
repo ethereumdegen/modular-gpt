@@ -2,7 +2,7 @@
 
 OpenAI in your command prompt with modules. 
 
-Modules are plugins (microservices) which the primary prompting process can communicates with using JSONRPC in the background.
+Modules are plugins (microservices) which the primary prompting process uses to extend its capabilities.  This is done using JSONRPC communications to various local ports. 
  
 
 ### Pre-requisites 
