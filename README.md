@@ -47,5 +47,7 @@ Now, in your main terminal, use 'yarn start' as normal to boot the primary promp
 
 
  ![image](https://user-images.githubusercontent.com/6249263/232649540-10ee4417-c116-44d5-99cd-25c8a016f990.png)
+ 
+ This is a result of a GPT3.5 output with embedded links!! Even though it would not embed those links by default, the webmodule microservice is helping inject the additional context. 
 
 
