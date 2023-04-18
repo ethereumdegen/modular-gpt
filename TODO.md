@@ -2,6 +2,10 @@
 
 ## TODO
 
-1. add images api 
-https://platform.openai.com/docs/guides/images/introduction
 
+### TODO 
+
+https://github.com/lirantal/nodejs-cli-apps-best-practices
+
+- consider using INK 
+- consider using prompts 

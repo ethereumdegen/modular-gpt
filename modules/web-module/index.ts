@@ -2,8 +2,8 @@ import WebServer from "../../lib/web-server";
 import submoduleConfigFile from "../../config/submodules.json";
 
 import localConfig from "./config.json";
-import { Route } from "degen-route-loader";
-import { search } from "./api-controller";
+ 
+import { fetchGptQueryWithSearch } from "./api-controller";
  
 
  /*
@@ -19,7 +19,7 @@ import { search } from "./api-controller";
 
 
 const moduleName = localConfig.name;
-const routes: Array<Route> = localConfig.routes;
+ 
 
 //@ts-ignore
 let serverConfig = submoduleConfigFile[moduleName];
@@ -32,7 +32,7 @@ async function start() {
   /*for (let route of routes) {
       jrpcserver.addMethod(route.uri, apiController[route.method]);
   }*/
-  jrpcserver.addMethod("search", search);
+  jrpcserver.addMethod("search", fetchGptQueryWithSearch);
  
 
   let rpcserver = new WebServer(serverConfig, jrpcserver);

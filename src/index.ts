@@ -6,6 +6,7 @@ import prompts from 'prompts'
 
 require('dotenv').config();
 
+const WELCOME_MESSAGE = chalk.greenBright(`Welcome to Modular GPT!`)
 
 const API_KEY = getOpenAIApiKey()
  
@@ -13,6 +14,9 @@ let aiController = new OpenAiController(API_KEY)
 
 const AI_MODEL = process.env.AI_MODEL;
 let aiModel:string = AI_MODEL || 'gpt-3.5-turbo'
+
+
+const MODULE_NAME = process.env.MODULE
   
    
 
@@ -30,20 +34,9 @@ const botColor = chalk.cyan
 import { handleUserInput } from "./commands";
 import { GptMessage, GptResponseChoice, TurboGptResponse } from "../interfaces/types";
 import { isAssertionSuccess } from "../lib/assertion-helper";
+import { getApiUrlForSubmodule, sendSubmoduleRequest } from "../lib/protocol";
  
- 
-
-function outputFormatted(rawResponse:any){
-
-    if(rawResponse.text){
-        console.log(`> ${rawResponse.text}`)
-        return
-    }
-
-    console.log(JSON.stringify((rawResponse)))
-}
-
-
+  
 function setupTerminal(){
 
     //readline.emitKeypressEvents(process.stdin);
@@ -51,31 +44,11 @@ function setupTerminal(){
     if (process.stdin.isTTY)
         process.stdin.setRawMode(true);
 
-    /*process.stdin.on('keypress', (chunk, key) => {
-        if(key && key.name == 'tab'){
-            incrementMode(  )
-        }
     
-    });*/
 
 
 }
-
-/*
-function incrementMode( ){
-
-    switch(mode){
-
-        case 'text': mode = 'image';break;
-        case 'image': mode = 'text';break;
-        default: mode = 'text';break;
-    }
-
-    console.log(  modeColor(`mode switched to: ${mode}  \n`))
-
-
-}*/
-
+ 
 
 function pushToChatHistory(message:GptMessage){
 
@@ -110,11 +83,45 @@ function printGptResponse(choice:GptResponseChoice){
     
 }
 
+async function queryModule(moduleName:string|undefined, userInput:string ) : Promise<string>{
+
+    if(moduleName){
+        
+        try{
+        let response = await sendSubmoduleRequest({
+            moduleName,
+            method:'search',
+            params:[userInput], 
+
+        })
+      
+        
+        if(!response || !response.data){
+            throw new Error('no response from submodule')
+        }
+      
+        return response.data.result
+        }catch(e){
+
+            console.log(`ERROR: could not connect to submodule ${moduleName}. Is it running? `)
+
+            console.error(e)
+            return userInput
+        }
+
+    }
+    
+
+
+    return userInput 
+
+}
+
+
 async function init(){
 
-   // const spinner = ora('Loading unicorns')
-
-    console.log( 'Welcome to Power-GPT. \n \n' )
+ 
+    console.log( `${WELCOME_MESSAGE} \n \n` )
 
 
     setupTerminal()
@@ -124,34 +131,23 @@ async function init(){
     while (running){
 
         const question = chalk.blue(`What would you like to ask? ` )
-       // let modeLabel = modeColor(` mode: ${mode}  \n `)
-
-      //  const userInput = await lineReader.questionAsync(question.concat(" ")) 
- 
+        
         const userInput = await prompts({
             type: 'text',
             name: 'input',
             message: question
           });
 
-        const resCallback = (response:any) => { 
- 
-
-            if(response.success){
-                const output = response.data 
-                outputFormatted( output )
-            }else{
-                console.log(chalk.red(response.error))
-            }
-
-        }
-
-        //change this so text is added to the terminal differently... maybe by being PUSHED out 
-        //let response = await handleUserInput(userInput, resCallback)
+    
         
-        let promptInput = userInput.input
+        const moduleName = MODULE_NAME || undefined
 
-      
+        let promptInput = await queryModule( moduleName, userInput.input );
+
+      //  console.log({promptInput})
+      //  let promptInput = userInput.input
+
+        
   
         let response = await aiController.queryChat({
             prompt: promptInput,

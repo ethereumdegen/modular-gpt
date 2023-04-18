@@ -8,7 +8,6 @@
       "method": "webSearch",
       "controller": "api"
     }
-  ],
-
-  "prompts": {}
+  ] 
+ 
 }
