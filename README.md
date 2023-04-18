@@ -46,7 +46,6 @@ yarn webmodule start
 Now, in your main terminal, use 'yarn start' as normal to boot the primary prompting process.  Your queries will first be routed to the webmodule microservice and processed with a custom system prompt including web search results before being sent to be processed by GPT. 
 
 
+ ![image](https://user-images.githubusercontent.com/6249263/232649540-10ee4417-c116-44d5-99cd-25c8a016f990.png)
 
-
-![image](https://user-images.githubusercontent.com/6249263/232649438-b11d944d-2f4d-4f19-9521-c4304d764003.png)
 
