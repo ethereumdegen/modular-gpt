@@ -5,6 +5,11 @@ OpenAI in your command prompt with modules.
 Modules are plugins (microservices) which the primary prompting process can communicates with using JSONRPC in the background.
  
 
+### Pre-requisites 
+
+1. NodeJS 16 (can install with nvm)
+
+
 ### Getting Started 
 
 1. Create a file named .env and add the token 
