@@ -22,6 +22,11 @@ OPENAI_API_KEY={your api key}
 2. yarn && yarn start 
 
 
+
+
+![image](https://user-images.githubusercontent.com/6249263/227419638-1f703d4f-163a-4c14-86f7-97e148313c67.png)
+
+
 ### Using modules 
 
 #### Web Module 
@@ -43,4 +48,5 @@ Now, in your main terminal, use 'yarn start' as normal to boot the primary promp
 
 
 
-![image](https://user-images.githubusercontent.com/6249263/227419638-1f703d4f-163a-4c14-86f7-97e148313c67.png)
+![image](https://user-images.githubusercontent.com/6249263/232649438-b11d944d-2f4d-4f19-9521-c4304d764003.png)
+
